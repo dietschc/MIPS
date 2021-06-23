@@ -1,101 +1,131 @@
  .data    
-    prompt1:    .asciiz      "Enter the first number: "
-    prompt2:    .asciiz      "Enter the second number: "
-    menu:      .asciiz      "Enter the number associated with the operation you want performed: 1 => add, 2 => subtract or 3 => multiply: "
-    resultText:    .asciiz      "Your final result is: "
-    end_msg:	.asciiz "Thank you for playing MathQuiz"
+    value1:.asciiz "Enter the first number: "
+    value2:.asciiz "Enter the second number: "
+    menu:.asciiz "Enter the number to choose an operation: 1 => add, 2 => subtract, 3 => multiply, 4 => divide: "
+    resultText:.asciiz "Your final result is: "
+    end_msg:.asciiz "Thank you for playing MathQuiz"
     newline:.asciiz "\n"
     
 .text
 .globl main
 main:
-    #The following block of code is to pre-load the integer values representing the various instructions into registers for storage
-    li $t3, 1    #This is to load the immediate value of 1 into the temporary register $t3
-    li $t4, 2    #This is to load the immediate value of 2 into the temporary register $t4
-    li $t5, 3    #This is to load the immediate value of 3 into the temporary register $t5
+   # Setup temp registers with values that correspond to operations
+   li $t3, 1
+   li $t4, 2
+   li $t5, 3
+   li $t6, 4
     
-     #asking the user to provide the first number
-    li $v0, 4     #command for printing a string
-    la $a0, prompt1 #loading the string to print into the argument to enable printing
-    syscall      #executing the command
+   # Request user input for first number
+   li $v0, 4
+   la $a0, value1
+   syscall
     
-    #the next block of code is for reading the first number provided by the user
-    li $v0, 5    #command for reading an integer
-    syscall      #executing the command for reading an integer
-    move $t0, $v0     #moving the number read from the user input into the temporary register $t0
+   # Copy user input for first value to temp register
+   li $v0, 5
+   syscall
+   move $t0, $v0
     
-    #asking the user to provide the second number
-    li $v0, 4    #command for printing a string
-    la $a0, prompt2    #loading the string into the argument to enable printing
-    syscall      #executing the command
+   # Request user input for second value
+   li $v0, 4
+   la $a0, value2
+   syscall
     
-    #reading the second number to be provided to the user
-    li $v0, 5    #command to read the number  provided by the user
-    syscall      #executing the command for reading an integer
-    move $t1, $v0    #moving the number read from the user input into the temporary register $t1
+   # Copy user input for second value to temp register
+   li $v0, 5
+   syscall
+   move $t1, $v0
+   
+   # Print menu to determine operation to run
+   li $v0, 4
+   la $a0, menu
+   syscall
     
-    li $v0, 4    #command for printing a string
-    la $a0, menu    #loading the string into the argument to enable printing
-    syscall      #executing the command
+   # Copy user input into temp register 2, used to determind which function to branch
+   li $v0, 5
+   syscall
+   move $t2, $v0
     
-    #the next block of code is to read the number provided by the user
-    li $v0, 5    #command for reading an integer
-    syscall      #executing the command
-    move $t2, $v0    #this command is to move the integer provided into the temporary register $t2
+   # Branch here
+   beq $t2, $t3, addBlock
+   beq $t2, $t4, subtractBlock
+   beq $t2, $t5, multiplyBlock
+   beq $t2, $t6, divideBlock
     
-    # Branch here
-    beq $t2, $t3, addProcess    #Branch to 'addProcess' if $t2 = $t3
-    beq $t2, $t4, subtractProcess #Branch to 'subtractProcess' if $t2 = $t4
-    beq $t2, $t5, multiplyProcess #Branch to 'multiplyProcess' if $t2 = $t5
+addBlock:
+   # Perform addition calculation and store value into temp register 7
+   add $t7, $t0, $t1
+   
+   # Print result message
+   li $v0, 4
+   la $a0, resultText
+   syscall
     
- addProcess:
-    add $t7,$t0,$t1    #this adds the values stored in $t0 and $t1 and assigns them to the     temporary register $t7
-    
-    #The following line of code is to print the results of the computation above
-    li $v0,4    #this is the command for printing a string
-    la $a0,resultText    #this loads the string to print into the argument $a0 for printing
-    syscall      #executes the command
-    
-    #the following line of code prints out the result of the addition computation
-    li $v0,1
-    la $a0, ($t7)
-    syscall
-    
- #   li $v0,10 #This is to terminate the program
+   # Print addition calculation result
+   li $v0, 1
+   la $a0, ($t7)
+   syscall
+
+   # Jump to exit function
  	j exit
     
- subtractProcess:
-    sub $t7,$t0,$t1 #this adds the values stored in $t0 and $t1 and assigns them to the temporary register $t7
-    li $v0,4    #this is the command for printing a string
-    la $a0,resultText    #this loads the string to print into the argument $a0 for printing
-    syscall      #executes the command
+subtractBlock:
+   # Perform subtraction calculation and store value into temp register 7
+   sub $t7, $t0, $t1
+
+   # Print result message
+   li $v0, 4
+   la $a0, resultText
+   syscall
     
-    #the following line of code prints out the result of the addition computation
-    li $v0,1
-    la $a0, ($t7)
-    syscall
+   # Print subtraction calculation result
+   li $v0, 1
+   la $a0, ($t7)
+   syscall
     
- #   li $v0,10 #This is to terminate the program
+   # Jump to exit function
  	j exit
     
- multiplyProcess:
-    mul $t7,$t0,$t1 #this adds the values stored in $t0 and $t1 and assigns them to the temporary register $t7
-    li $v0,4    #this is the command for printing a string
-    la $a0,resultText    #this loads the string to print into the argument $a0 for printing
-    syscall      #executes the command
+multiplyBlock:
+   # Perform multiplication calculation and store value into temp register 7
+   mul $t7, $t0, $t1
+
+   # Print result message
+   li $v0, 4
+   la $a0, resultText
+   syscall
     
-    #the following line of code prints out the result of the addition computation
-    li $v0,1
-    la $a0, ($t7)
-    syscall
+   # Print multiplication calculation result
+   li $v0, 1
+   la $a0, ($t7)
+   syscall
     
- #   li $v0,10 #This is to terminate the program
+   # Jump to exit function
+ 	j exit
+
+divideBlock:
+   # Perform division calculation and store value into temp register 7
+   div $t7, $t0, $t1
+
+   # Print result message
+   li $v0, 4
+   la $a0, resultText
+   syscall
+    
+   # Print addition calculation result
+   li $v0, 1
+   la $a0, ($t7)
+   syscall
+    
+   # Jump to exit function
  	j exit
     
- exit: 	li $v0, 4
+exit:
+   # Print newline
+   li $v0, 4
  	la $a0, newline
  	syscall
  
+   # Print exit message
  	li $v0, 4
  	la $a0, end_msg
  	syscall
