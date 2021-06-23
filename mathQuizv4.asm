@@ -85,16 +85,6 @@ addBlock:
    la $a0, questionMark
    syscall
    
-   # Print equals sign
-   li $v0, 4
-   la $a0, equalSign
-   syscall
-    
-   # Print calculation result
-   li $v0, 1
-   la $a0, ($t7)
-   syscall
-   
    # Collect user input and compare to answer
    li $v0, 5
    syscall
@@ -131,16 +121,6 @@ subtractBlock:
    la $a0, questionMark
    syscall
        
-   # Print equals sign
-   li $v0, 4
-   la $a0, equalSign
-   syscall
-    
-   # Print calculation result
-   li $v0, 1
-   la $a0, ($t7)
-   syscall
-    
    # Collect user input and compare to answer
    li $v0, 5
    syscall
@@ -175,16 +155,6 @@ multiplyBlock:
    # Print question mark
    li $v0, 4
    la $a0, questionMark
-   syscall
-           
-   # Print equals sign
-   li $v0, 4
-   la $a0, equalSign
-   syscall
-    
-   # Print calculation result
-   li $v0, 1
-   la $a0, ($t7)
    syscall
    
    # Collect user input and compare to answer
@@ -221,16 +191,6 @@ divideBlock:
    # Print question mark
    li $v0, 4
    la $a0, questionMark
-   syscall
-           
-   # Print equals sign
-   li $v0, 4
-   la $a0, equalSign
-   syscall
-    
-   # Print calculation result
-   li $v0, 1
-   la $a0, ($t7)
    syscall
 
    # Collect user input and compare to answer
@@ -280,7 +240,7 @@ exit:
    la $a0, resultText1
    syscall
    
-   # Calculate total
+   # Calculate total score
    add $s0, $t8, $t9
 
    # Print total score
@@ -311,6 +271,21 @@ exit:
    # Print incorrect message
    li $v0, 4
    la $a0, resultText4
+   syscall
+   
+   # Convert values to floating point to calculate percent
+#   l.d $f0, 0($t8)
+#   l.d $f1, 0($s0)
+   mtc1.d $t8, $f0
+   mtc1.d $s0, $f1
+   
+   # Calculate percent
+   div.d $f2, $f0, $f1
+
+   # Print float as percent
+   li $v0, 3
+   l.d $f2, ($f2)
+ #  l.d $a0, ($f12)
    syscall
    
    # Print percent sign
