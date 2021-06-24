@@ -273,19 +273,24 @@ exit:
    la $a0, resultText4
    syscall
    
-   # Convert values to floating point to calculate percent
-#   l.d $f0, 0($t8)
-#   l.d $f1, 0($s0)
-   mtc1.d $t8, $f0
-   mtc1.d $s0, $f1
+   # Convert correct and incorrect values to double to calculate percent
+   mtc1.d $t8, $f2
+   cvt.d.w $f2, $f2 
+   mtc1.d $s0, $f4
+   cvt.d.w $f4, $f4
+   
+   # Load 100 into temp register and convert to double to calcculate percent
+   li $t6, 100
+   mtc1.d $t6, $f6
+   cvt.d.w $f6, $f6 
    
    # Calculate percent
-   div.d $f2, $f0, $f1
+   div.d $f8, $f2, $f4
+   mul.d $f8, $f8, $f6
 
-   # Print float as percent
+   # Print double as percent
    li $v0, 3
-   l.d $f2, ($f2)
- #  l.d $a0, ($f12)
+   mov.d $f12, $f8
    syscall
    
    # Print percent sign
