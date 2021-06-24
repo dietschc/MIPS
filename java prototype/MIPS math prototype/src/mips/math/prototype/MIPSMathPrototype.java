@@ -1,6 +1,11 @@
 package mips.math.prototype;
 import java.util.Scanner;
 
+// Cole Dietsch
+// Week 6/7 Assignment Prototype
+// CSC310 Computer Architecute and Operating Systems
+// Professor Amitava Karmaker
+
 public class MIPSMathPrototype {
     
     public static int answer;
