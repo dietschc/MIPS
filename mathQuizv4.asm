@@ -1,3 +1,8 @@
+ # Cole Dietsch
+ # Week 6/7 Assignment
+ # CSC310 Computer Architecute and Operating Systems
+ # Professor Amitava Karmaker
+ 
  .data
     start_msg:.asciiz "Welcome to a Math Quiz.\n"
     whatIs_msg: .asciiz "What is "
@@ -235,7 +240,7 @@ exit:
    la $a0, newline
    syscall
 
-   # Print correct message
+   # Print total message
    li $v0, 4
    la $a0, resultText1
    syscall
@@ -268,27 +273,27 @@ exit:
    la $a0, ($t9)
    syscall
  
-   # Print incorrect message
+   # Print score message
    li $v0, 4
    la $a0, resultText4
    syscall
    
-   # Convert correct and incorrect values to double to calculate percent
+   # Convert correct and incorrect values to double to calculate score percent
    mtc1.d $t8, $f2
    cvt.d.w $f2, $f2 
    mtc1.d $s0, $f4
    cvt.d.w $f4, $f4
    
-   # Load 100 into temp register and convert to double to calcculate percent
+   # Load 100 into temp register and convert to double to calcculate score percent
    li $t6, 100
    mtc1.d $t6, $f6
    cvt.d.w $f6, $f6 
    
-   # Calculate percent
+   # Calculate score percent
    div.d $f8, $f2, $f4
    mul.d $f8, $f8, $f6
 
-   # Print double as percent
+   # Print score as double percent
    li $v0, 3
    mov.d $f12, $f8
    syscall
